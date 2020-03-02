@@ -159,13 +159,47 @@ Bullet.update = function(){
 }
  
 var DEBUG = true;
+
+var USERS = {
+    "bob":"asd",
+    "bob2":"bob",
+    "bob3":"ttt",
+
+}
+var isValidPassword = function(data){
+    return USERS[data.username] === data.password;
+}
+
+var isUsernameTaken = function(data){
+    return USERS[data.username];
+}
+
+var addUser = function(data){
+    USERS[data.username] = data.password;
+}
  
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
-   
-    Player.onConnect(socket);
+
+    socket.on('signIn',function(data){
+        if(isValidPassword(data)){
+            Player.onConnect(socket);
+            socket.emit('signInResponse',{sucess:true});
+        }else{
+            socket.emit('signInResponse',{sucess:false});
+        }
+    });
+
+    socket.on('signUp',function(data){
+        if(isUsernameTaken(data)){
+            socket.emit('signUpResponse',{sucess:false});
+        }else{
+            addUser(data);
+            socket.emit('signUpResponse',{sucess:true});
+        }
+    });
    
     socket.on('disconnect',function(){
         delete SOCKET_LIST[socket.id];
@@ -183,10 +217,7 @@ io.sockets.on('connection', function(socket){
             return;
         var res = eval(data);
         socket.emit('evalAnswer',res);     
-    });
-   
-   
-   
+    });   
 });
  
 setInterval(function(){
