@@ -108,4 +108,7 @@ dist/
 tmp/
 temp/
 
+# Config folders
+config/mongoConnection
+
 # End of https://www.gitignore.io/api/node

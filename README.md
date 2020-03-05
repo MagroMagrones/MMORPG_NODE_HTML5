@@ -1,1 +1,2 @@
 MMORPG following the tutorial at https://scripterswar.com/tutorial/nodejs
+*From episode 9 there are small changes in the code for using async/await and moongose compared to the one presented in the tutorial.
